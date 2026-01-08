@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import { API_BASE_URL } from "../config";
 import AuthContext from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import ImageEditor from "../components/ImageEditor"; // Import Editor
@@ -74,7 +75,7 @@ function Profile() {
     if (!path) return null;
     let cleanPath = path.replace(/\\/g, "/");
     if (cleanPath.startsWith("/")) cleanPath = cleanPath.substring(1);
-    return `http://localhost:5000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   const profilePicUrl = file
@@ -130,6 +131,11 @@ function Profile() {
               <CardContent className="text-center text-muted-foreground text-sm italic">
                 "{bio || "No bio yet..."}"
               </CardContent>
+              <CardFooter className="justify-center pb-6">
+                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20">
+                  Level {user.level || 1}
+                </div>
+              </CardFooter>
             </Card>
 
             <Card>

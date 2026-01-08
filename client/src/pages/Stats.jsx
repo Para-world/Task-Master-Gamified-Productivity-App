@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { API_BASE_URL } from "../config";
 import AuthContext from "../context/AuthContext";
 import {
   Card,
@@ -85,7 +86,7 @@ const Stats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/todos", {
+        const res = await fetch(`${API_BASE_URL}/api/todos`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },

@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { cn } from "../lib/utils";
 import { LayoutDashboard, User, BarChart2, LogOut, Clock } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
-const Sidebar = () => {
+const Sidebar = ({ className, onClose }) => {
   const location = useLocation();
   const { user, logout } = useContext(AuthContext);
 
@@ -15,11 +16,16 @@ const Sidebar = () => {
     if (!path) return null;
     let cleanPath = path.replace(/\\/g, "/");
     if (cleanPath.startsWith("/")) cleanPath = cleanPath.substring(1);
-    return `http://localhost:5000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   return (
-    <div className="w-[250px] bg-card border-r border-border flex flex-col p-6 fixed h-screen top-0 left-0 z-50">
+    <div
+      className={cn(
+        "w-[250px] bg-card border-r border-border flex flex-col p-6 fixed h-screen top-0 left-0 z-50 transition-transform duration-300",
+        className
+      )}
+    >
       <div className="mb-8 text-center">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
           Task Master
@@ -53,6 +59,7 @@ const Sidebar = () => {
       <nav className="flex flex-col space-y-2 flex-1">
         <Link
           to="/"
+          onClick={onClose}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             isActive("/") &&
@@ -63,6 +70,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/profile"
+          onClick={onClose}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             isActive("/profile") &&
@@ -73,6 +81,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/history"
+          onClick={onClose}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             isActive("/history") &&
@@ -83,6 +92,7 @@ const Sidebar = () => {
         </Link>
         <Link
           to="/stats"
+          onClick={onClose}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             isActive("/stats") &&

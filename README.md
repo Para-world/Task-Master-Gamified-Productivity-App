@@ -11,6 +11,7 @@ _(Replace with actual app screenshot)_
 ### 🎮 Gamification
 
 - **Streaks**: Keep your momentum going by completing tasks every day.
+- **Level Up**: Earn XP for every task. High priority = more XP. Can you reach Level 100?
 - **Badges**: Unlock achievements like _Early Bird_, _Weekend Warrior_, and _Streak Master_.
 - **Celebrations**: Enjoy satisfying confetti explosions upon task completion.
 
@@ -31,7 +32,20 @@ _(Replace with actual app screenshot)_
 - **Productivity Pulse**: Interactive Area Chart showing your activity trend over the last 7 days.
 - **Category Breakdown**: Beautiful Donut Chart visualizing your work-life balance.
 - **Priority Insights**: Rounded Bar Chart displaying task urgency distribution.
+
 - **Metrics**: Track lifetime tasks, pending counts, and total focus time.
+
+### 📱 Fully Responsive
+
+- **Mobile First**: Smooth experience on all devices, from phones to desktops.
+- **Adaptive UI**: Smart navigation that transforms from a sidebar to a drawer on smaller screens.
+- **Touch Friendly**: optimized buttons and interactions for touch devices.
+
+### 🎨 Customization
+
+- **Theme Support**: Seamless Dark/Light mode toggle.
+- **Profile**: Upload & Crop profile pictures with the built-in image editor.
+- **Bio & Details**: Personalize your profile with a bio and personal info.
 
 ---
 
@@ -44,7 +58,9 @@ _(Replace with actual app screenshot)_
 - **UI Components**: [Shadcn UI](https://ui.shadcn.com/) (Radix Primitives)
 - **Charts**: [Recharts](https://recharts.org/)
 - **Icons**: [Lucide React](https://lucide.dev/)
+
 - **Effects**: [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
+- **Image Editing**: [React Easy Crop](https://www.npmjs.com/package/react-easy-crop)
 
 ### Server
 

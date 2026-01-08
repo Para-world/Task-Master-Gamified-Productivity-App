@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 
 const AuthContext = createContext();
 
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       body = JSON.stringify(userData);
     }
 
-    const res = await fetch("http://localhost:5000/api/users", {
+    const res = await fetch(`${API_BASE_URL}/api/users`, {
       method: "POST",
       headers: headers,
       body: body,
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData) => {
     console.log("Logging in...", userData);
-    const res = await fetch("http://localhost:5000/api/users/login", {
+    const res = await fetch(`${API_BASE_URL}/api/users/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -69,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   // Update Profile Function
   const updateProfile = async (formData) => {
-    const res = await fetch("http://localhost:5000/api/users/profile", {
+    const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${user.token}`,
@@ -91,7 +92,7 @@ export const AuthProvider = ({ children }) => {
   // Refresh User Data (for Badges/Streak)
   const refreshUser = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/users/me", {
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -104,7 +105,9 @@ export const AuthProvider = ({ children }) => {
         const updatedUser = { ...data, token: user.token };
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
+        return updatedUser;
       }
+      return null;
     } catch (error) {
       console.error("Failed to refresh user:", error);
     }

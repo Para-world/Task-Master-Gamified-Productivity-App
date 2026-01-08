@@ -125,11 +125,39 @@ const updateTodo = async (req, p_res) => {
         }
 
         // 3. Streak Master (Streak >= 3)
+        // 3. Streak Master (Streak >= 3)
         if (user.streak >= 3 && !newBadges.includes("Streak Master")) {
           newBadges.push("Streak Master");
         }
 
-        if (streakUpdated || newBadges.length !== user.badges.length) {
+        // --- XP & Leveling Logic ---
+        const xpMap = {
+          High: 30,
+          Medium: 20,
+          Low: 10,
+        };
+        const gainedXP = xpMap[todo.priority] || 20;
+
+        // Init fields if missing
+        user.level = user.level || 1;
+        user.xp = user.xp || 0;
+
+        user.xp += gainedXP;
+
+        // Level Up Threshold: Level * 100 (e.g., Lvl 1 needs 100, Lvl 2 needs 200)
+        let xpThreshold = user.level * 100;
+        while (user.xp >= xpThreshold) {
+          user.xp -= xpThreshold;
+          user.level += 1;
+          xpThreshold = user.level * 100; // Recalculate for next level if double jump
+        }
+        // ---------------------------
+
+        if (
+          streakUpdated ||
+          newBadges.length !== user.badges.length ||
+          gainedXP > 0
+        ) {
           user.badges = newBadges;
           await user.save();
         }

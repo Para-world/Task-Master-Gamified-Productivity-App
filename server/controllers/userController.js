@@ -44,6 +44,8 @@ const registerUser = async (req, res) => {
       username: user.username,
       dob: user.dob,
       deletedTasksCount: user.deletedTasksCount,
+      level: user.level,
+      xp: user.xp,
     });
   } else {
     res.status(400);
@@ -71,6 +73,8 @@ const loginUser = async (req, res) => {
       username: user.username,
       dob: user.dob,
       deletedTasksCount: user.deletedTasksCount,
+      level: user.level,
+      xp: user.xp,
     });
   } else {
     res.status(400);
@@ -114,6 +118,8 @@ const updateProfile = async (req, res) => {
       username: updatedUser.username,
       dob: updatedUser.dob,
       deletedTasksCount: updatedUser.deletedTasksCount,
+      level: updatedUser.level,
+      xp: updatedUser.xp,
     });
   } else {
     res.status(404);

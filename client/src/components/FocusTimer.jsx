@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useContext } from "react";
+import { API_BASE_URL } from "../config";
 import { X, Play, Pause, Square, CheckCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -64,7 +65,7 @@ const FocusTimer = ({ isOpen, onClose, task, onComplete }) => {
 
     // Update User Focus Time
     try {
-      await fetch("http://localhost:5000/api/users/focus", {
+      await fetch(`${API_BASE_URL}/api/users/focus`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

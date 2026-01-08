@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
+import { API_BASE_URL } from "../config";
 import confetti from "canvas-confetti";
 import AddTodo from "../components/AddTodo";
 import Notification from "../components/Notification";
 import ProofModal from "../components/ProofModal";
 import FocusTimer from "../components/FocusTimer";
+import LevelProgress from "../components/LevelProgress";
 import AuthContext from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { Checkbox } from "../components/ui/checkbox";
@@ -44,7 +46,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/todos", {
+        const res = await fetch(`${API_BASE_URL}/api/todos`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -87,7 +89,7 @@ function Dashboard() {
   // Add Todo
   const addTodo = async (todo) => {
     try {
-      const res = await fetch("http://localhost:5000/api/todos", {
+      const res = await fetch(`${API_BASE_URL}/api/todos`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -113,7 +115,7 @@ function Dashboard() {
   // Delete Todo
   const deleteTodo = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
+      await fetch(`${API_BASE_URL}/api/todos/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -176,7 +178,7 @@ function Dashboard() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/todos/${id}`, {
         method: "PUT",
         headers: headers,
         body: body,
@@ -194,18 +196,75 @@ function Dashboard() {
           origin: { y: 0.6 },
           colors: ["#a855f7", "#ec4899", "#ffffff"], // Matching theme colors
         });
-        refreshUser(); // Check for new streak/badges
+        const updatedUser = await refreshUser(); // Check for new streak/badges
+        if (updatedUser) {
+          const oldBadges = user.badges || [];
+          const newBadges = updatedUser.badges || [];
+          const earned = newBadges.filter((b) => !oldBadges.includes(b));
+          earned.forEach((b) =>
+            setTimeout(
+              () => showNotification(`🏆 Unlocked: ${b}!`, "success"),
+              1500
+            )
+          );
+
+          if (updatedUser.level > (user.level || 1)) {
+            setTimeout(
+              () =>
+                showNotification(
+                  `🆙 Level Up! You are now Level ${updatedUser.level}!`,
+                  "success"
+                ),
+              500
+            );
+            confetti({
+              particleCount: 200,
+              spread: 100,
+              colors: ["#FFD700", "#FFA500"],
+            });
+          }
+        }
       } else if ("completed" in updData) {
         const isCompleted = updData.completed;
-        showNotification(isCompleted ? "Task completed! 🎉" : "Task reopened");
         if (isCompleted) {
+          const xpMap = { High: 30, Medium: 20, Low: 10 };
+          const gainedXP = xpMap[todoToUpdate.priority] || 20;
+          showNotification(`Task completed! 🎉 +${gainedXP} XP`, "success");
+
           confetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 },
             colors: ["#a855f7", "#ec4899", "#ffffff"],
           });
-          refreshUser(); // Check for new streak/badges
+          const updatedUser = await refreshUser(); // Check for new streak/badges
+          if (updatedUser) {
+            const oldBadges = user.badges || [];
+            const newBadges = updatedUser.badges || [];
+            const earned = newBadges.filter((b) => !oldBadges.includes(b));
+            earned.forEach((b) =>
+              setTimeout(
+                () => showNotification(`🏆 Unlocked: ${b}!`, "success"),
+                1500
+              )
+            );
+
+            if (updatedUser.level > (user.level || 1)) {
+              setTimeout(
+                () =>
+                  showNotification(
+                    `🆙 Level Up! You are now Level ${updatedUser.level}!`,
+                    "success"
+                  ),
+                500
+              );
+              confetti({
+                particleCount: 200,
+                spread: 100,
+                colors: ["#FFD700", "#FFA500"],
+              });
+            }
+          }
         }
       } else {
         showNotification("Task updated successfully");
@@ -266,6 +325,9 @@ function Dashboard() {
       )}
 
       <div className="container max-w-4xl mx-auto py-8">
+        {user && (
+          <LevelProgress level={user.level} xp={user.xp} className="mb-6" />
+        )}
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
@@ -300,9 +362,9 @@ function Dashboard() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Filter" />
                 </SelectTrigger>
                 <SelectContent>
@@ -312,7 +374,7 @@ function Dashboard() {
                 </SelectContent>
               </Select>
               <Select value={sortOrder} onValueChange={setSortOrder}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent>
@@ -489,9 +551,9 @@ const TodoItem = ({ todo, onToggle, onDelete, onUpdate, onFocus }) => {
                 onChange={(e) => setEditDesc(e.target.value)}
                 placeholder="Description"
               />
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Select value={editCategory} onValueChange={setEditCategory}>
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-full sm:w-[140px]">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -502,7 +564,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onUpdate, onFocus }) => {
                   </SelectContent>
                 </Select>
                 <Select value={editPriority} onValueChange={setEditPriority}>
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-full sm:w-[140px]">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
@@ -516,7 +578,7 @@ const TodoItem = ({ todo, onToggle, onDelete, onUpdate, onFocus }) => {
                   value={editRecurrence}
                   onValueChange={setEditRecurrence}
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-full sm:w-[140px]">
                     <SelectValue placeholder="Repeat" />
                   </SelectTrigger>
                   <SelectContent>
