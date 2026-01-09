@@ -99,9 +99,18 @@ Create a `.env` file in the `server` directory:
 
 ```env
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/?retryWrites=true&w=majority
 JWT_SECRET=your_jwt_secret
 ```
+
+**Using MongoDB Atlas (Recommended):**
+
+1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Create a generic free cluster (System Default).
+3. In **Database Access**, create a user and password.
+4. In **Network Access**, allow access from anywhere (`0.0.0.0/0`) or your specific IP.
+5. In **Database** > **Connect** > **Drivers**, copy the connection string.
+6. Paste the string into `MONGO_URI` in `server/.env` and replace `<password>` with your database password.
 
 Start the server:
 
